@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShiftSync | Make a Chaotic Household Easier to Run</title>
+<meta name="description" content="A personalized household operating plan for shift-working families and busy homes.">
+<style>
+body{margin:0;font-family:system-ui;background:#0a1220;color:#f7f9fc;line-height:1.55}.wrap{max-width:980px;margin:auto;padding:24px}
+.hero{padding:60px 0}.accent{color:#b7a7ff}.card{background:#141f32;border:1px solid #30405a;border-radius:18px;padding:22px;margin:18px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.btn{display:inline-block;background:#b7a7ff;color:#0a1020;padding:12px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:0}
+input,select,textarea{width:100%;box-sizing:border-box;background:#0d1828;color:#fff;border:1px solid #30405a;border-radius:10px;padding:12px;margin:6px 0}
+textarea{min-height:120px}.small{color:#b6c0d2;font-size:.92rem}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+
+<div class="wrap hero">
+<h1>When everybody is busy, <span class="accent">the house needs a system too.</span></h1>
+<p>ShiftSync turns rotating work schedules, kids' activities, appointments, bills and household responsibilities into one simple operating plan your family can actually follow.</p>
+<a class="btn" href="#order">Build my ShiftSync plan</a>
+</div>
+
+<div class="wrap">
+<div class="grid">
+<div class="card"><h3>Know who's doing what</h3><p>Clear ownership for recurring household jobs so fewer things fall through the cracks.</p></div>
+<div class="card"><h3>Make shift changes easier</h3><p>We build a simple weekly handoff system for families where work hours keep moving.</p></div>
+<div class="card"><h3>See the month before it hits</h3><p>Appointments, bills, school events and home tasks are organized into one practical planning view.</p></div>
+</div>
+
+<div class="card">
+<h2>Launch offer — CA$39</h2>
+<p><b>ShiftSync Household Ops Pack</b></p>
+<ul>
+<li>Personalized weekly household schedule</li>
+<li>Responsibility / chore ownership map</li>
+<li>Recurring bill and due-date map</li>
+<li>Weekly handoff checklist</li>
+<li>Appointments / activity planning section</li>
+<li>Meal / grocery planning framework</li>
+<li>“What needs attention this week?” page</li>
+<li>One revision round</li>
+</ul>
+<p><b>Target turnaround:</b> within 24 hours after completed intake and payment.</p>
+</div>
+
+<div class="card">
+<h2>Example</h2>
+<p><b>Monday handoff</b><br>
+Kim: night shift 18:00–06:00<br>
+Partner: school drop-off / pickup<br>
+Priority: mortgage due, garbage night, hockey bag packed<br>
+Dinner plan: freezer meal<br>
+Tomorrow prep: permission form + fuel vehicle</p>
+<p class="small">The finished plan is customized to the household information the customer provides.</p>
+</div>
+
+<div class="card" id="order">
+<h2>Start your ShiftSync plan</h2>
+<form action="https://formsubmit.co/freedomwithwater@gmail.com" method="POST">
+<input type="hidden" name="_subject" value="ShiftSync order request">
+<input type="hidden" name="_template" value="table">
+<input type="hidden" name="_next" value="https://kimmymaltais-sys.github.io/crewcontent-ai/shiftsync.html?submitted=1#order">
+<input type="text" name="_honey" style="display:none">
+<input name="Name" required placeholder="Your name">
+<input type="email" name="Email" required placeholder="Your email">
+<input name="Household size" required placeholder="How many people are in the household?">
+<select name="Schedule type" required>
+<option value="">What best describes your household?</option>
+<option>Shift work</option>
+<option>Rotating schedule</option>
+<option>Two busy working adults</option>
+<option>Single-parent household</option>
+<option>Family with multiple kids' activities</option>
+<option>Other</option>
+</select>
+<textarea name="Biggest household chaos" required placeholder="What keeps getting missed, forgotten or left to one person?"></textarea>
+<button class="btn" type="submit">Submit request →</button>
+</form>
+<p class="small"><b>Important:</b> ShiftSync is a planning and organization service. It does not provide financial, medical, legal or emergency advice, and it does not access bank accounts, passwords or private calendars. Customers decide what information to include and are responsible for keeping critical appointments and payments current.</p>
+</div>
+</div>
+
+<script>
+if(new URLSearchParams(location.search).get('submitted')==='1'){
+document.querySelector('#order').insertAdjacentHTML('afterbegin','<p style="padding:12px;border:1px solid #b7a7ff;border-radius:10px"><b>Thanks — your ShiftSync request was submitted.</b></p>')
+}
+</script>
+</body></html>
