@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StoryVault | Turn Family Stories Into a Keepsake</title>
+<meta name="description" content="Turn voice notes, memories and photos into a polished digital family storybook.">
+<style>
+body{margin:0;font-family:system-ui;background:#171218;color:#fbf7fa;line-height:1.55}.wrap{max-width:980px;margin:auto;padding:24px}.hero{padding:60px 0}
+.accent{color:#f3a9c7}.card{background:#241c26;border:1px solid #46384a;border-radius:18px;padding:22px;margin:18px 0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.btn{display:inline-block;background:#f3a9c7;color:#241018;padding:12px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:0}
+input,select,textarea{width:100%;box-sizing:border-box;background:#1c151e;color:#fff;border:1px solid #46384a;border-radius:10px;padding:12px;margin:6px 0}textarea{min-height:120px}
+.small{color:#c7b9c5;font-size:.92rem}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+<div class="wrap hero">
+<h1>Someday, the stories you hear all the time <span class="accent">won’t be easy to ask for again.</span></h1>
+<p>StoryVault turns voice notes, family memories and photos into a polished digital keepsake you can save, share and pass down.</p>
+<a class="btn" href="#order">Start a StoryVault</a>
+</div>
+
+<div class="wrap">
+<div class="grid">
+<div class="card"><h3>No writing required</h3><p>Tell the stories in your own words by voice note or rough notes. We organize and polish them.</p></div>
+<div class="card"><h3>Keep the person's voice</h3><p>We preserve the tone and personality instead of turning every story into stiff formal writing.</p></div>
+<div class="card"><h3>Make it giftable</h3><p>The finished keepsake is structured and clean enough to share with children, parents or grandparents.</p></div>
+</div>
+
+<div class="card"><h2>Launch offer — CA$59</h2><p><b>StoryVault Starter Book</b></p>
+<ul><li>Up to 10 short memories/stories</li><li>Chronological or themed structure</li><li>Light editing while preserving voice</li><li>Up to 15 customer-supplied photos placed/captioned</li><li>Title page and introduction</li><li>Family-name / people reference page</li><li>Digital keepsake document</li><li>One revision round</li></ul>
+<p><b>Target turnaround:</b> within 3 days after receiving stories/photos and payment.</p></div>
+
+<div class="card"><h2>Example prompts</h2>
+<p>“What did your first job pay?”<br>“What was your childhood home like?”<br>“How did you meet?”<br>“What family tradition do you never want forgotten?”<br>“What is one lesson you learned the hard way?”</p>
+<p class="small">The customer chooses what to include. We do not invent family history or alter sensitive facts without approval.</p></div>
+
+<div class="card" id="order"><h2>Start your StoryVault</h2>
+<form action="https://formsubmit.co/freedomwithwater@gmail.com" method="POST">
+<input type="hidden" name="_subject" value="StoryVault order request"><input type="hidden" name="_template" value="table">
+<input type="hidden" name="_next" value="https://kimmymaltais-sys.github.io/crewcontent-ai/storyvault.html?submitted=1#order">
+<input type="text" name="_honey" style="display:none">
+<input name="Name" required placeholder="Your name"><input type="email" name="Email" required placeholder="Your email">
+<input name="Who is the book about" required placeholder="Who is the keepsake about?">
+<select name="Purpose" required><option value="">What is this for?</option><option>Family keepsake</option><option>Birthday / anniversary gift</option><option>Parent / grandparent stories</option><option>Life-story starter</option><option>Memorial / remembrance</option><option>Other</option></select>
+<textarea name="Story idea" required placeholder="Tell us what kind of stories or memories you want to preserve."></textarea>
+<button class="btn" type="submit">Submit request →</button></form>
+<p class="small"><b>Important:</b> StoryVault is an editing and keepsake-creation service. Customers must have permission to use submitted photos and are responsible for reviewing sensitive names, dates and personal information before sharing the final document.</p>
+</div></div>
+<script>if(new URLSearchParams(location.search).get('submitted')==='1'){document.querySelector('#order').insertAdjacentHTML('afterbegin','<p style="padding:12px;border:1px solid #f3a9c7;border-radius:10px"><b>Thanks — your StoryVault request was submitted.</b></p>')}</script>
+</body></html>
