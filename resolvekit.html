@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ResolveKit | Turn a Messy Complaint Into a Clear Case</title>
+<meta name="description" content="A done-for-you complaint and escalation pack for everyday customer-service problems.">
+<style>
+body{margin:0;font-family:system-ui;background:#10131a;color:#f7f7fb;line-height:1.55}.wrap{max-width:980px;margin:auto;padding:24px}
+.hero{padding:60px 0}.accent{color:#ffb86b}.card{background:#191f2a;border:1px solid #343d4f;border-radius:18px;padding:22px;margin:18px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.btn{display:inline-block;background:#ffb86b;color:#17120b;padding:12px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:0}
+input,select,textarea{width:100%;box-sizing:border-box;background:#121722;color:#fff;border:1px solid #343d4f;border-radius:10px;padding:12px;margin:6px 0}
+textarea{min-height:120px}.small{color:#b7c0d1;font-size:.92rem}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+<div class="wrap hero">
+<h1>You know what happened. <span class="accent">ResolveKit helps you say it clearly.</span></h1>
+<p>When a company gets your bill, repair, order, service or refund wrong, it can be hard to explain the whole mess without getting emotional or forgetting key details. ResolveKit turns your notes, screenshots and timeline into a calm, organized escalation pack.</p>
+<a class="btn" href="#order">Build my ResolveKit</a>
+</div>
+
+<div class="wrap">
+<div class="grid">
+<div class="card"><h3>Clean timeline</h3><p>We organize dates, calls, promises, charges and responses so the story is easy to follow.</p></div>
+<div class="card"><h3>Clear written complaint</h3><p>You get a professional escalation email or letter that explains the issue and the resolution you are asking for.</p></div>
+<div class="card"><h3>Call-ready</h3><p>We give you a short phone script and follow-up wording so you do not have to improvise under pressure.</p></div>
+</div>
+
+<div class="card">
+<h2>Launch offer — CA$29</h2>
+<p><b>ResolveKit Core Pack</b></p>
+<ul>
+<li>One clean incident timeline</li>
+<li>One professional complaint / escalation email</li>
+<li>One shorter follow-up email</li>
+<li>Phone-call script</li>
+<li>Requested-resolution wording</li>
+<li>Evidence checklist based on what you have</li>
+<li>One revision round</li>
+</ul>
+<p><b>Target turnaround:</b> within 24 hours after we receive your notes/documents and payment.</p>
+</div>
+
+<div class="card">
+<h2>Example</h2>
+<p><b>Raw version:</b> “They charged me again even though I cancelled and I called twice and nobody fixed it.”</p>
+<p><b>ResolveKit version:</b><br>
+“I cancelled the service on August 12 and received confirmation the same day. A further charge of $84.00 was processed on September 3. I contacted customer service on September 4 and September 8, but the charge remains unresolved. I am requesting reversal of the September 3 charge and written confirmation that the account is closed.”</p>
+<p class="small">We organize and rewrite the customer’s own facts. We do not invent events, evidence or legal rights.</p>
+</div>
+
+<div class="card" id="order">
+<h2>Start your ResolveKit</h2>
+<form action="https://formsubmit.co/freedomwithwater@gmail.com" method="POST">
+<input type="hidden" name="_subject" value="ResolveKit order request">
+<input type="hidden" name="_template" value="table">
+<input type="hidden" name="_next" value="https://kimmymaltais-sys.github.io/crewcontent-ai/resolvekit.html?submitted=1#order">
+<input type="text" name="_honey" style="display:none">
+<input name="Name" required placeholder="Your name">
+<input type="email" name="Email" required placeholder="Your email">
+<select name="Problem type" required>
+<option value="">What kind of problem?</option>
+<option>Billing / duplicate charge</option>
+<option>Refund problem</option>
+<option>Repair / warranty issue</option>
+<option>Order / delivery issue</option>
+<option>Subscription cancellation issue</option>
+<option>Service complaint</option>
+<option>Other customer-service problem</option>
+</select>
+<input name="Company involved" required placeholder="Company involved">
+<textarea name="What happened" required placeholder="Tell us what happened in your own words. Dates and amounts help if you know them."></textarea>
+<textarea name="Requested outcome" required placeholder="What would you like the company to do to resolve it?"></textarea>
+<button class="btn" type="submit">Submit request →</button>
+</form>
+<p class="small"><b>Important:</b> ResolveKit is a writing and organization service, not a law firm, legal service, regulator or dispute-resolution body. We do not determine legal rights, threaten legal action, contact companies on your behalf or guarantee any refund or outcome. Customers are responsible for checking facts and deciding what to send.</p>
+</div>
+</div>
+<script>
+if(new URLSearchParams(location.search).get('submitted')==='1'){
+document.querySelector('#order').insertAdjacentHTML('afterbegin','<p style="padding:12px;border:1px solid #ffb86b;border-radius:10px"><b>Thanks — your ResolveKit request was submitted.</b></p>')
+}
+</script>
+</body></html>
