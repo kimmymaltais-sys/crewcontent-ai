@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SellStack | Turn Clutter Into Ready-to-Post Listings</title>
+<meta name="description" content="Send photos of items you want to sell. Get polished titles, descriptions, buyer replies and a simple posting plan.">
+<style>
+body{margin:0;font-family:system-ui;background:#0b1320;color:#f6f8fb;line-height:1.55}.wrap{max-width:980px;margin:auto;padding:24px}
+.hero{padding:60px 0}.accent{color:#8bd5ff}.card{background:#121f31;border:1px solid #29405f;border-radius:18px;padding:22px;margin:18px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.btn{display:inline-block;background:#8bd5ff;color:#07121a;padding:12px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:0}
+input,select,textarea{width:100%;box-sizing:border-box;background:#0e1928;color:#fff;border:1px solid #29405f;border-radius:10px;padding:12px;margin:6px 0}
+textarea{min-height:120px}.small{color:#afbdd0;font-size:.92rem}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+<div class="wrap hero">
+<h1>Your garage is full of money you haven't listed yet. <span class="accent">SellStack writes the listings for you.</span></h1>
+<p>Send us photos and basic details for up to 10 items. We turn them into clean, ready-to-post Marketplace/Kijiji-style listings with titles, descriptions, buyer replies, bundle ideas and a simple posting order.</p>
+<a class="btn" href="#order">Build my listing pack</a>
+</div>
+
+<div class="wrap">
+<div class="grid">
+<div class="card"><h3>Stop staring at the blank listing box</h3><p>We write the title and description so you can copy, paste and post.</p></div>
+<div class="card"><h3>Handle repetitive buyer questions faster</h3><p>We include reusable answers for common questions like availability, pickup, dimensions and condition.</p></div>
+<div class="card"><h3>Clear more stuff with less effort</h3><p>We suggest sensible bundles and a posting order based on the information you give us.</p></div>
+</div>
+
+<div class="card">
+<h2>Launch offer — CA$29</h2>
+<p><b>SellStack 10-Item Pack</b></p>
+<ul>
+<li>10 ready-to-post listing titles</li>
+<li>10 polished descriptions</li>
+<li>Condition wording based on your notes/photos</li>
+<li>Suggested buyer-question replies</li>
+<li>Bundle ideas when items naturally belong together</li>
+<li>Simple posting order</li>
+<li>One revision round</li>
+</ul>
+<p><b>Target turnaround:</b> within 24 hours after receiving clear photos/details and payment.</p>
+</div>
+
+<div class="card">
+<h2>Example</h2>
+<p><b>Before:</b> “old dewalt drill works good battery charger included”</p>
+<p><b>SellStack version:</b><br><b>DeWalt Cordless Drill Kit — Battery + Charger Included</b><br>
+Used DeWalt cordless drill in working condition. Includes drill, battery and charger. Normal cosmetic wear from use. Good option for a homeowner, garage setup or backup tool. Pickup details provided by seller.</p>
+<p class="small">We only use facts the seller provides. We do not invent condition, age, model, warranty or value.</p>
+</div>
+
+<div class="card" id="order">
+<h2>Start your SellStack pack</h2>
+<form action="https://formsubmit.co/freedomwithwater@gmail.com" method="POST">
+<input type="hidden" name="_subject" value="SellStack order request">
+<input type="hidden" name="_template" value="table">
+<input type="hidden" name="_next" value="https://kimmymaltais-sys.github.io/crewcontent-ai/sellstack.html?submitted=1#order">
+<input type="text" name="_honey" style="display:none">
+<input name="Name" required placeholder="Your name">
+<input type="email" name="Email" required placeholder="Your email">
+<input name="City / Area" placeholder="City / area">
+<select name="Main item category" required>
+<option value="">Main item category</option>
+<option>Tools</option><option>Furniture</option><option>Electronics</option><option>Auto / garage</option><option>Home / household</option><option>Kids / baby</option><option>Outdoor / sporting goods</option><option>Mixed items</option><option>Other</option>
+</select>
+<textarea name="What they want to sell" required placeholder="Tell us roughly what you want to sell. After you submit, we'll reply with the simple photo/detail checklist."></textarea>
+<button class="btn" type="submit">Submit request →</button>
+</form>
+<p class="small"><b>Important:</b> SellStack provides listing drafts from seller-supplied information. Sellers are responsible for accurate item condition, ownership, legal sale, safety, platform rules, pricing and transaction arrangements. We do not handle payment, shipping or buyer funds.</p>
+</div>
+</div>
+<script>
+if(new URLSearchParams(location.search).get('submitted')==='1'){
+document.querySelector('#order').insertAdjacentHTML('afterbegin','<p style="padding:12px;border:1px solid #8bd5ff;border-radius:10px"><b>Thanks — your SellStack request was submitted.</b></p>')
+}
+</script>
+</body></html>
