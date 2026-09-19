@@ -64,20 +64,26 @@ section{padding:56px 0}.head h2{font-size:clamp(2rem,4vw,3rem);letter-spacing:-.
 
 <section id="order"><div class="wrap"><div class="cta">
 <h2>Get your first content pack.</h2>
-<p>Fill this out and tap the button. It opens your email app with the order details already filled in.</p>
-<form onsubmit="sendOrder(event)"><div class="orderbox">
-<input id="name" required placeholder="Your name">
-<input id="business" required placeholder="Business name">
-<input id="service" required placeholder="Main trade or service">
-<input id="area" placeholder="Service area / city">
-<select id="plan" required><option value="">Choose a package</option><option>Kickstart — CA$39</option><option>30-Day Custom Pack — CA$99</option><option>Monthly Crew — CA$249/month</option></select>
-<input id="contact" placeholder="Best phone number (optional)">
-<textarea id="notes" placeholder="Website/social links, main services, current offer, or anything else"></textarea>
-</div><button class="btn" type="submit">Send order request →</button></form>
+<p>Fill this out and tap the button. Your order request is sent directly to CrewContent AI.</p>
+<form action="https://formsubmit.co/freedomwithwater@gmail.com" method="POST">
+<input type="hidden" name="_subject" value="CrewContent AI order request">
+<input type="hidden" name="_template" value="table">
+<input type="hidden" name="_next" value="https://kimmymaltais-sys.github.io/crewcontent-ai/?submitted=1#order">
+<input type="text" name="_honey" style="display:none">
+<div class="orderbox">
+<input id="name" name="Name" required placeholder="Your name">
+<input id="business" name="Business" required placeholder="Business name">
+<input id="service" name="Trade or service" required placeholder="Main trade or service">
+<input id="area" name="Service area" placeholder="Service area / city">
+<select id="plan" name="Package" required><option value="">Choose a package</option><option>Kickstart — CA$39</option><option>30-Day Custom Pack — CA$99</option><option>Monthly Crew — CA$249/month</option></select>
+<input id="contact" name="Phone" placeholder="Best phone number (optional)">
+<input id="email" name="email" type="email" required placeholder="Your email address">
+<textarea id="notes" name="Notes / links" placeholder="Website/social links, main services, current offer, or anything else"></textarea>
+</div><button class="btn" type="submit">Submit order request →</button></form>
 
 <div class="legal">
 <h3>Privacy</h3>
-<p>This site does not collect payment-card information. Order requests are sent through your own email app. Information you choose to send is used to respond to your request and deliver the agreed service. Do not send passwords, banking passwords, health information, or anything not needed for the project.</p>
+<p>This site does not collect payment-card information. Order requests are submitted through a form-processing service and forwarded to CrewContent AI by email. Information you choose to send is used to respond to your request and deliver the agreed service. Do not send passwords, banking passwords, health information, or anything not needed for the project.</p>
 <h3>Terms</h3>
 <p>CrewContent AI provides AI-assisted, human-reviewed marketing-content drafts. Clients are responsible for checking business-specific facts, prices, promotions, licences, claims and legal requirements before publishing. No followers, leads, rankings, revenue or sales are guaranteed. Unless otherwise agreed, one reasonable revision round is included with one-time packs.</p>
 </div>
@@ -87,26 +93,12 @@ section{padding:56px 0}.head h2{font-size:clamp(2rem,4vw,3rem);letter-spacing:-.
 
 <script>
 function pick(p){document.getElementById('plan').value=p}
-function sendOrder(e){
-e.preventDefault();
-const v=id=>document.getElementById(id).value.trim();
-const subject='CrewContent AI order request — '+v('business');
-const body=`Hi CrewContent AI,
-
-I'd like to order a content pack.
-
-Name: ${v('name')}
-Business: ${v('business')}
-Trade/service: ${v('service')}
-Service area: ${v('area')}
-Package: ${v('plan')}
-Phone: ${v('contact')}
-
-Notes / links:
-${v('notes')}
-
-Thanks.`;
-window.location.href=`mailto:freedomwithwater@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+if(new URLSearchParams(window.location.search).get('submitted')==='1'){
+  const box=document.querySelector('.cta');
+  const msg=document.createElement('div');
+  msg.style.cssText='margin:0 0 18px;padding:14px 16px;border:1px solid rgba(99,230,190,.55);border-radius:12px;background:rgba(99,230,190,.08);color:#d1fae5;font-weight:800';
+  msg.textContent='Thanks — your CrewContent AI order request was submitted.';
+  box.insertBefore(msg, box.firstChild);
 }
 </script>
 </body></html>
