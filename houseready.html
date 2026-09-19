@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HouseReady | Your Home, Explained in One Place</title>
+<style>
+body{margin:0;font-family:system-ui;background:#0b1320;color:#f6f8fb;line-height:1.55} .wrap{max-width:980px;margin:auto;padding:24px}
+.hero{padding:60px 0}.accent{color:#7ee3b8}.card{background:#121f31;border:1px solid #29405f;border-radius:18px;padding:22px;margin:18px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.btn{display:inline-block;background:#7ee3b8;color:#07121a;padding:12px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:0}
+input,select,textarea{width:100%;box-sizing:border-box;background:#0e1928;color:#fff;border:1px solid #29405f;border-radius:10px;padding:12px;margin:6px 0}
+textarea{min-height:120px}.small{color:#afbdd0;font-size:.92rem}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+<div class="wrap hero">
+<h1>If you weren't home tomorrow, <span class="accent">would your family know how the house works?</span></h1>
+<p>HouseReady turns your home's scattered information into one clean digital manual: shutoff locations, breaker notes, filter sizes, appliance details, maintenance reminders, service contacts and the little things only one person usually knows.</p>
+<a class="btn" href="#order">Build my home manual</a>
+</div>
+<div class="wrap"><div class="grid">
+<div class="card"><h3>Know where everything is</h3><p>Document utility locations, filters, equipment and household reference points.</p></div>
+<div class="card"><h3>Stop relying on memory</h3><p>Keep model numbers, service dates, sizes and contractor contacts together.</p></div>
+<div class="card"><h3>Make it usable by others</h3><p>Create a guide your spouse, family or house-sitter can actually understand.</p></div>
+</div>
+<div class="card"><h2>Launch offer — CA$59</h2>
+<p><b>HouseReady Core Manual</b></p>
+<ul><li>Home quick-reference page</li><li>Utility and shutoff location section</li><li>Breaker/electrical notes section</li><li>Heating, cooling and filter reference</li><li>Appliance/equipment inventory</li><li>Maintenance calendar</li><li>Service contacts</li><li>House-specific notes</li><li>One revision</li></ul>
+<p><b>Target turnaround:</b> within 48 hours after completed intake, usable photos/details and payment.</p>
+</div>
+<div class="card"><h2>Example sections</h2>
+<p><b>Main water shutoff</b><br>Location: basement mechanical room beside water meter.<br>Photo reference: HR-03.</p>
+<p><b>Furnace filter</b><br>Size: 16 × 25 × 1.<br>Last changed: September 2026.</p>
+<p><b>Electrical panel</b><br>Panel location: basement utility room.<br>Kitchen plugs: breaker 14.</p>
+</div>
+<div class="card" id="order"><h2>Start your HouseReady manual</h2>
+<form action="https://formsubmit.co/freedomwithwater@gmail.com" method="POST">
+<input type="hidden" name="_subject" value="HouseReady order request">
+<input type="hidden" name="_template" value="table">
+<input type="hidden" name="_next" value="https://kimmymaltais-sys.github.io/crewcontent-ai/houseready.html?submitted=1#order">
+<input type="text" name="_honey" style="display:none">
+<input name="Name" required placeholder="Your name">
+<input type="email" name="Email" required placeholder="Your email">
+<input name="City / Province" placeholder="City / province">
+<select name="Home type" required><option value="">Home type</option><option>Detached house</option><option>Duplex / semi</option><option>Townhouse</option><option>Condo / apartment</option><option>Mobile / manufactured</option><option>Other</option></select>
+<textarea name="What they want documented" required placeholder="What would you most want your family or house-sitter to know about the house?"></textarea>
+<button class="btn" type="submit">Submit request →</button>
+</form>
+<p class="small"><b>Important:</b> HouseReady organizes information supplied by the homeowner. It is not a home inspection, safety inspection, engineering service, electrical/plumbing/HVAC diagnosis, emergency service, or substitute for manufacturer instructions or qualified tradespeople. Verify critical information before relying on it.</p>
+</div></div>
+<script>
+if(new URLSearchParams(location.search).get('submitted')==='1'){document.querySelector('#order').insertAdjacentHTML('afterbegin','<p style="padding:12px;border:1px solid #7ee3b8;border-radius:10px"><b>Thanks — your HouseReady request was submitted.</b></p>')}
+</script>
+</body></html>
