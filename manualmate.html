@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ManualMate | Turn a Huge Manual Into a Useful Quick Guide</title>
+<meta name="description" content="A personalized quick-reference guide built from the exact manual for your equipment, appliance, RV or machine.">
+<style>
+body{margin:0;font-family:system-ui;background:#0b1320;color:#f7f9fc;line-height:1.55}.wrap{max-width:980px;margin:auto;padding:24px}.hero{padding:60px 0}
+.accent{color:#6ee7f5}.card{background:#121f31;border:1px solid #29405f;border-radius:18px;padding:22px;margin:18px 0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.btn{display:inline-block;background:#6ee7f5;color:#07121a;padding:12px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:0}
+input,select,textarea{width:100%;box-sizing:border-box;background:#0e1928;color:#fff;border:1px solid #29405f;border-radius:10px;padding:12px;margin:6px 0}textarea{min-height:120px}
+.small{color:#afbdd0;font-size:.92rem}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+<div class="wrap hero">
+<h1>Your manual is 180 pages. <span class="accent">You only need the pages that matter.</span></h1>
+<p>ManualMate turns the exact manufacturer manual for your appliance, RV, equipment or machine into a plain-English quick-reference guide built around what you actually need to find.</p>
+<a class="btn" href="#order">Build my quick guide</a>
+</div>
+<div class="wrap">
+<div class="grid">
+<div class="card"><h3>Find the important stuff faster</h3><p>We organize the model-specific information you care about into one short guide.</p></div>
+<div class="card"><h3>Keep the source attached</h3><p>Key facts are tied back to the supplied manufacturer manual instead of guessed from memory.</p></div>
+<div class="card"><h3>Make handoffs easier</h3><p>Create a simple reference for your household, staff or future self without hunting through a long PDF.</p></div>
+</div>
+<div class="card"><h2>Launch offer — CA$39</h2><p><b>ManualMate Quick Guide</b></p>
+<ul><li>One device/equipment manual condensed</li><li>Model/spec quick reference</li><li>Startup / shutdown reference when clearly documented</li><li>Maintenance schedule extracted from the manual</li><li>Common alerts / indicators section</li><li>Consumables / filter / fluid reference where documented</li><li>Important page references back to the source manual</li><li>One revision round</li></ul>
+<p><b>Target turnaround:</b> within 24 hours after receiving the correct manual/model information and payment.</p></div>
+<div class="card"><h2>Example</h2><p><b>Instead of:</b> searching a 180-page RV appliance manual for winter storage instructions.</p>
+<p><b>ManualMate:</b> “Winter storage reference — see manufacturer manual pp. 74–77. Required steps are summarized here in the same order, with model-specific warnings preserved.”</p>
+<p class="small">We do not invent operating, repair or safety instructions. The manufacturer manual remains the controlling source.</p></div>
+
+<div class="card" id="order"><h2>Start your ManualMate guide</h2>
+<form action="https://formsubmit.co/freedomwithwater@gmail.com" method="POST">
+<input type="hidden" name="_subject" value="ManualMate order request"><input type="hidden" name="_template" value="table">
+<input type="hidden" name="_next" value="https://kimmymaltais-sys.github.io/crewcontent-ai/manualmate.html?submitted=1#order">
+<input type="text" name="_honey" style="display:none">
+<input name="Name" required placeholder="Your name"><input type="email" name="Email" required placeholder="Your email">
+<input name="Equipment / appliance" required placeholder="What equipment/appliance is this for?">
+<input name="Brand and model" required placeholder="Brand and exact model">
+<select name="Main use" required><option value="">What do you want help finding?</option><option>Everyday operation reference</option><option>Maintenance schedule</option><option>Seasonal storage</option><option>Indicators / alerts</option><option>Consumables / filters / fluids</option><option>General quick guide</option></select>
+<textarea name="What matters most" required placeholder="Tell us what you keep needing to look up."></textarea>
+<button class="btn" type="submit">Submit request →</button></form>
+<p class="small"><b>Important:</b> ManualMate summarizes customer-supplied or manufacturer source material. It is not repair, engineering, electrical, mechanical or safety advice. For hazardous, regulated or safety-critical work, follow the original manufacturer instructions and use qualified service personnel.</p>
+</div></div>
+<script>if(new URLSearchParams(location.search).get('submitted')==='1'){document.querySelector('#order').insertAdjacentHTML('afterbegin','<p style="padding:12px;border:1px solid #6ee7f5;border-radius:10px"><b>Thanks — your ManualMate request was submitted.</b></p>')}</script>
+</body></html>
