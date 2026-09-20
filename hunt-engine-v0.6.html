@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Hunt Engine V0.6</title>
+<style>
+:root{
+  --bg:#0d1117; --panel:#161b22; --panel2:#20262e; --text:#f0f6fc; --muted:#9da7b3;
+  --line:#30363d; --ok:#3fb950; --warn:#d29922; --bad:#f85149; --accent:#58a6ff;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.wrap{max-width:900px;margin:auto;padding:18px}
+h1{font-size:30px;margin:8px 0}
+.sub{color:var(--muted);line-height:1.45;margin-bottom:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:650px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:13px;color:var(--muted);margin:3px 0 6px}
+input,select,textarea{width:100%;padding:13px;border-radius:11px;border:1px solid var(--line);background:#0d1117;color:var(--text);font-size:16px}
+textarea{min-height:90px;resize:vertical}
+button{border:0;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:700;cursor:pointer}
+.primary{background:var(--accent);color:#07111d;width:100%}
+.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:flex;align-items:center;gap:6px;padding:9px 11px;border:1px solid var(--line);border-radius:999px;background:#0d1117}
+.pill input{width:auto}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.big{font-size:32px;font-weight:800}
+.small{font-size:12px;color:var(--muted)}
+.bar{height:12px;background:#0d1117;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.fill{height:100%;background:var(--ok);width:0%}
+.job{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px;background:#10151c}
+.job h3{margin:0 0 5px;font-size:18px}
+.meta{color:var(--muted);font-size:13px;line-height:1.4}
+.money{font-size:20px;font-weight:800;margin:8px 0}
+.tag{display:inline-block;font-size:12px;padding:4px 8px;border-radius:999px;margin:3px 4px 3px 0;border:1px solid var(--line)}
+.good{color:#7ee787;border-color:#238636}.warn{color:#e3b341;border-color:#9e6a03}.bad{color:#ff7b72;border-color:#da3633}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.actions a,.actions button{font-size:13px;padding:9px 10px;text-decoration:none}
+.source{color:var(--accent)}
+.hide{display:none}
+.notice{border-left:4px solid var(--warn);padding:10px 12px;background:#211a0b;border-radius:8px;line-height:1.4}
+.oknotice{border-left:4px solid var(--ok);padding:10px 12px;background:#0f2414;border-radius:8px;line-height:1.4}
+footer{color:var(--muted);font-size:12px;line-height:1.4;padding:20px 2px 40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Hunt Engine <span class="small">V0.6 prototype</span></h1>
+  <div class="sub">Tell it the money goal. The engine hunts for work that fits the person's limits, ranks it, flags obvious risks, and builds a possible route toward the goal.</div>
+<div id="runtime" class="notice">Loading app…</div>
+
+  <div class="card">
+    <label>What are you trying to do?</label>
+    <select id="lane" onchange="laneChanged()" style="margin-bottom:14px">
+      <option value="quick" selected>QUICK CASH — I need money soon</option>
+      <option value="steady">STEADY INCOME — I need ongoing work</option>
+    </select>
+    <div id="laneNote" class="oknotice" style="margin-bottom:14px">
+      Quick Cash mode prioritizes fast-start + fast-payout evidence — including legitimate cash, instant transfer or platform payout — and will NOT count ordinary jobs toward an urgent money goal.
+    </div>
+    <div class="grid">
+      <div>
+        <label>Money goal (CAD)</label>
+        <input id="goal" type="number" value="500" min="1">
+      </div>
+      <div>
+        <label>Deadline</label>
+        <select id="deadline">
+          <option value="1">Today / next 24 hours</option>
+          <option value="3" selected>Within 3 days</option>
+          <option value="7">Within 7 days</option>
+          <option value="14">Within 14 days</option>
+        </select>
+      </div>
+      <div>
+        <label>What does the goal mean?</label>
+        <select id="goalMode">
+          <option value="cash" selected>Money paid by the deadline</option>
+          <option value="booked">Work booked / accepted by the deadline</option>
+        </select>
+      </div>
+      <div>
+        <label>Country / market</label>
+        <select id="country" onchange="countryChanged()">
+          <option value="CA" selected>Canada</option>
+          <option value="US">United States</option>
+          <option value="GB">United Kingdom</option>
+          <option value="AU">Australia</option>
+          <option value="NZ">New Zealand</option>
+          <option value="OTHER">Other / worldwide</option>
+        </select>
+      </div>
+      <div>
+        <label>Currency</label>
+        <select id="currency">
+          <option value="CAD" selected>CAD — Canadian dollar</option>
+          <option value="USD">USD — US dollar</option>
+          <option value="GBP">GBP — British pound</option>
+          <option value="AUD">AUD — Australian dollar</option>
+          <option value="NZD">NZD — New Zealand dollar</option>
+          <option value="EUR">EUR — Euro</option>
+        </select>
+      </div>
+      <div>
+        <label>City / area</label>
+        <input id="location" value="Edmonton, AB" placeholder="City, region, postal area">
+      </div>
+      <div>
+        <label>Maximum travel distance</label>
+        <select id="radius">
+          <option value="8">8 km</option>
+          <option value="16">16 km</option>
+          <option value="26" selected>26 km</option>
+          <option value="40">40 km</option>
+          <option value="80">80 km</option>
+        </select>
+      </div>
+      <div>
+        <label>How fast must payment happen?</label>
+        <select id="paySpeed">
+          <option value="same_day">Same day</option>
+          <option value="next_day">By next day</option>
+          <option value="3_days" selected>Within 3 days</option>
+          <option value="7_days">Within 7 days</option>
+          <option value="any">Any payout timing</option>
+        </select>
+      </div>
+      <div>
+        <label>Hours available per day</label>
+        <input id="hours" type="number" value="6" min="1" max="16">
+      </div>
+      <div>
+        <label>Transportation</label>
+        <select id="transport">
+          <option>Car</option>
+          <option>Truck</option>
+          <option>SUV / van</option>
+          <option>Public transit</option>
+          <option>Bike</option>
+          <option>No vehicle</option>
+        </select>
+      </div>
+    </div>
+
+    <label style="margin-top:14px">Work I am willing to do</label>
+    <div class="pills">
+      <label class="pill"><input type="checkbox" class="work" value="general labour" checked> General labour</label>
+      <label class="pill"><input type="checkbox" class="work" value="moving helper" checked> Moving</label>
+      <label class="pill"><input type="checkbox" class="work" value="cleaner" checked> Cleaning</label>
+      <label class="pill"><input type="checkbox" class="work" value="warehouse" checked> Warehouse</label>
+      <label class="pill"><input type="checkbox" class="work" value="delivery driver" checked> Delivery</label>
+      <label class="pill"><input type="checkbox" class="work" value="landscaping" checked> Yard / landscaping</label>
+      <label class="pill"><input type="checkbox" class="work" value="handyman"> Basic handyman</label>
+      <label class="pill"><input type="checkbox" class="work" value="event staff"> Event work</label>
+    </div>
+
+    <label style="margin-top:14px">Extra limits or useful equipment</label>
+    <textarea id="notes" placeholder="Example: available after 5 PM, can lift 50 lb, have a truck, no heights, no electrical/gas/plumbing work."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <strong>Live source connector</strong>
+        <div class="small">Jooble regional REST API (Canada key connected)</div>
+      </div>
+      <button class="secondary" onclick="toggleApi()">API setup</button>
+    </div>
+    <div id="apiBox" class="hide" style="margin-top:12px">
+      <label>Jooble API key for selected market</label>
+      <input id="apiKey" type="password" placeholder="Paste test key here">
+      <div class="small" style="margin-top:7px">Prototype only: the key stays in this browser session. Production will use a secure backend so keys are never exposed to users.</div>
+    </div>
+    <div id="adzunaBox" class="hide" style="margin-top:14px">
+      <label>Adzuna market code</label>
+      <input id="adzunaMarket" value="ca" placeholder="Example: ca, gb, us">
+      <div class="small" style="margin-top:5px">Use only a market that Adzuna currently supports for your account.</div>
+      <label style="margin-top:10px">Adzuna App ID</label>
+      <input id="adzunaId" type="password" placeholder="Optional — add when registered">
+      <label style="margin-top:10px">Adzuna App Key</label>
+      <input id="adzunaKey" type="password" placeholder="Optional — add when registered">
+      <div class="small" style="margin-top:7px">Optional second source. Leave blank for now. Production will keep all source keys on a secure backend.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <strong>Source coverage</strong>
+    <div class="small" style="line-height:1.6;margin-top:8px">
+      <span class="tag good">LIVE IN CANADA</span> Jooble — official API key currently connected for the Canadian market<br>
+      <span class="tag warn">GLOBAL-READY</span> Country/market selection is now built into V0.6<br>
+      <span class="tag warn">READY TO CONNECT</span> Adzuna — official API connector is built; market access depends on the country supported by the provider<br>
+      <span class="tag warn">FAST-PAY SOURCES</span> Local gig/shift/task sources will be plugged in country-by-country only where automated access is permitted
+    </div>
+  </div>
+
+  <button class="primary" onclick="hunt()">HUNT FOR WORK</button>
+
+  <div id="status"></div>
+
+  <div id="results" class="hide">
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="small">MONEY GOAL</div>
+          <div class="big" id="goalOut">$0</div>
+        </div>
+        <div style="text-align:right">
+          <div class="small" id="routeLabel">VERIFIED-FIT ROUTE VALUE*</div>
+          <div class="big" id="routeOut">$0</div>
+        </div>
+      </div>
+      <div class="bar"><div class="fill" id="fill"></div></div>
+      <div class="small" style="margin-top:7px">*For a cash goal, only postings with explicit fast-start AND payout wording are counted. For a booked-work goal, fast-start matches may be counted. This is still not a promise of hire, hours, earnings or payout.</div>
+    </div>
+
+    <div class="card">
+      <strong>Best matches</strong>
+      <div class="small">Ranked for relevance, start timing, payout evidence, pay information and obvious safety flags. A temporary job is not automatically treated as quick cash.</div>
+      <div id="jobList"></div>
+    </div>
+
+    <div class="card">
+      <strong>Safety rules built into this prototype</strong>
+      <div class="small" style="line-height:1.7;margin-top:8px">
+        • Never pay an upfront fee to get a job.<br>
+        • Never accept gift cards, cheque overpayments or requests to forward money.<br>
+        • No automatic application or messaging; the person reviews everything first.<br>
+        • Regulated/high-risk work is flagged instead of recommended blindly.<br>
+        • Exact home address should not be exposed before both sides agree to the job.<br>
+        • Source link stays visible so the worker can verify the original posting.
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    V0.6 prototype for validation only. It does not guarantee work, pay, availability, licensing, safety, or that a posting remains active. Users must verify the original posting and comply with local employment, tax, licensing and safety rules.
+  </footer>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const r = document.getElementById('runtime');
+  if (r) {
+    r.className = 'oknotice';
+    r.innerHTML = '<strong>App ready.</strong> JavaScript is running in this browser.';
+  }
+});
+
+const DEMO_JOBS = [
+ {title:"Temporary General Labourer",company:"DEMO Employer",location:"Edmonton, AB",salary:"$24 per hour",type:"Temporary",updated:"demo",snippet:"Short-term general labour. Day shift. Immediate start. Physical work.",link:"#",demo:true},
+ {title:"Moving Helper",company:"DEMO Moving Co.",location:"Edmonton, AB",salary:"$27 per hour",type:"Casual",updated:"demo",snippet:"Casual moving helper. Must be able to lift furniture. Weekend work available.",link:"#",demo:true},
+ {title:"Evening Warehouse Associate",company:"DEMO Warehouse",location:"Edmonton, AB",salary:"$23 per hour",type:"Part time",updated:"demo",snippet:"Evening warehouse shift. Picking and loading. Part-time.",link:"#",demo:true},
+ {title:"Landscape Cleanup Labourer",company:"DEMO Yard Co.",location:"Edmonton, AB",salary:"$25 per hour",type:"Contract",updated:"demo",snippet:"Seasonal cleanup and basic yard labour. Short contract.",link:"#",demo:true},
+ {title:"Electrical Service Helper",company:"DEMO Electrical",location:"Edmonton, AB",salary:"$32 per hour",type:"Contract",updated:"demo",snippet:"Electrical service support and panel work.",link:"#",demo:true},
+];
+
+function money(n){
+  const c=(document.getElementById('currency') && document.getElementById('currency').value) || 'CAD';
+  try { return new Intl.NumberFormat(undefined,{style:'currency',currency:c,maximumFractionDigits:0}).format(n||0); }
+  catch(e){ return `${c} ${Math.round(n||0)}`; }
+}
+
+function countryChanged(){
+  const country=document.getElementById('country').value;
+  const currency=document.getElementById('currency');
+  const loc=document.getElementById('location');
+  const market=document.getElementById('adzunaMarket');
+  const map={
+    CA:{currency:'CAD',market:'ca',placeholder:'Edmonton, AB'},
+    US:{currency:'USD',market:'us',placeholder:'Denver, CO'},
+    GB:{currency:'GBP',market:'gb',placeholder:'Manchester'},
+    AU:{currency:'AUD',market:'au',placeholder:'Brisbane, QLD'},
+    NZ:{currency:'NZD',market:'nz',placeholder:'Auckland'}
+  };
+  if(map[country]){
+    currency.value=map[country].currency;
+    market.value=map[country].market;
+    loc.placeholder=map[country].placeholder;
+  } else {
+    loc.placeholder='City, region, postal area';
+  }
+}
+function toggleApi(){
+  document.getElementById('apiBox').classList.toggle('hide');
+  document.getElementById('adzunaBox').classList.toggle('hide');
+}
+
+function laneChanged(){
+  const lane=document.getElementById('lane').value;
+  const note=document.getElementById('laneNote');
+  const goalMode=document.getElementById('goalMode');
+  if(lane==="quick"){
+    note.className="oknotice";
+    note.innerHTML="<strong>Quick Cash:</strong> prioritize fast-start + fast-payout evidence. Legitimate cash jobs can qualify, but the app never treats off-the-books payment, tax evasion or unsafe arrangements as a feature.";
+    goalMode.value="cash";
+  } else {
+    note.className="oknotice";
+    note.innerHTML="<strong>Steady Income:</strong> prioritize ongoing jobs, reliable hourly pay and fit. Payout-by-deadline evidence is not required.";
+    goalMode.value="booked";
+  }
+}
+
+function selectedWork(){
+  return [...document.querySelectorAll('.work:checked')].map(x=>x.value);
+}
+
+function parseHourly(text){
+  if(!text) return null;
+  const s=String(text).replace(/,/g,'');
+  let m=s.match(/\$?\s*([0-9]+(?:\.[0-9]+)?)\s*(?:-|to)?\s*\$?\s*([0-9]+(?:\.[0-9]+)?)?\s*(?:per\s*)?(hour|hr|hourly)/i);
+  if(m){
+    const a=Number(m[1]), b=m[2]?Number(m[2]):a;
+    return (a+b)/2;
+  }
+  m=s.match(/\$?\s*([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*)?(day|daily)/i);
+  if(m) return Number(m[1])/8;
+  m=s.match(/\$?\s*([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*)?(year|yearly|annum|annual)/i);
+  if(m) return Number(m[1])/2080;
+  return null;
+}
+
+function regulatedRisk(text){
+  const risky=[
+    "electrical","electrician","panel","gas fitting","gasfitter","gas fitter",
+    "refrigeration mechanic","boiler","elevator","crane operator",
+    "plumber","plumbing","heavy duty mechanic","automotive service technician"
+  ];
+  const t=text.toLowerCase();
+  return risky.some(k=>t.includes(k));
+}
+
+function scamRisk(text){
+  const flags=["upfront fee","gift card","deposit to start","send money","overpayment","cheque and return","crypto payment","training fee"];
+  const t=text.toLowerCase();
+  return flags.some(k=>t.includes(k));
+}
+
+function shortTermScore(text){
+  const terms=["temporary","temp ","casual","contract","immediate","urgent","seasonal","part time","part-time","weekend","evening","on call","on-call","day labour","day labor","same day","daily pay","start immediately"];
+  const t=text.toLowerCase();
+  return terms.reduce((n,k)=>n+(t.includes(k)?1:0),0);
+}
+
+function longTermPenalty(text, deadlineDays){
+  const t=text.toLowerCase();
+  let p=0;
+  if(deadlineDays<=3 && (t.includes("full-time") || t.includes("full time"))) p+=5;
+  if(deadlineDays<=7 && (t.includes("permanent") || t.includes("career"))) p+=4;
+  return p;
+}
+
+function payoutSignal(text){
+  const t=text.toLowerCase();
+  const fast=["daily pay","paid daily","same day pay","same-day pay","same day payout","paid after shift","cash after shift","cash on completion","cash upon completion","instant pay","instant payout","e-transfer after","etransfer after","next day pay","next-day pay","weekly pay","paid weekly"];
+  return fast.some(k=>t.includes(k));
+}
+
+function explicitCashByDeadline(text, deadlineDays){
+  const t=text.toLowerCase();
+  if(deadlineDays<=1){
+    return ["daily pay","paid daily","same day pay","same-day pay","paid after shift","cash after shift","cash on completion","cash upon completion","instant pay","instant payout","e-transfer after","etransfer after"].some(k=>t.includes(k));
+  }
+  if(deadlineDays<=3){
+    return ["daily pay","paid daily","same day pay","same-day pay","paid after shift","cash after shift","cash on completion","cash upon completion","instant pay","instant payout","e-transfer after","etransfer after","next day pay","next-day pay"].some(k=>t.includes(k));
+  }
+  if(deadlineDays<=7){
+    return payoutSignal(t);
+  }
+  return payoutSignal(t) || ["biweekly","bi-weekly","every two weeks"].some(k=>t.includes(k));
+}
+
+function explicitFastStart(text, deadlineDays){
+  const t=text.toLowerCase();
+  const now=["start today","start immediately","immediate start","starts immediately","urgent start","start tomorrow","can start tomorrow"];
+  if(now.some(k=>t.includes(k))) return true;
+  if(deadlineDays>=7 && ["temporary","temp ","casual","contract","seasonal","on-call","on call"].some(k=>t.includes(k))) return true;
+  return false;
+}
+
+function decodeSnippet(s){
+  const el=document.createElement('textarea');
+  el.innerHTML=String(s||"");
+  return el.value.replace(/\s+/g," ").trim();
+}
+
+function quickCashEligible(job, deadlineDays){
+  const t=(job.title+" "+job.snippet+" "+(job.type||"")).toLowerCase();
+  if(regulatedRisk(t) || scamRisk(t)) return false;
+  return explicitCashByDeadline(t,deadlineDays) && explicitFastStart(t,deadlineDays);
+}
+
+function quickBookedEligible(job, deadlineDays){
+  const t=(job.title+" "+job.snippet+" "+(job.type||"")).toLowerCase();
+  if(regulatedRisk(t) || scamRisk(t)) return false;
+  if(deadlineDays<=3) return explicitFastStart(t,deadlineDays);
+  if(deadlineDays<=7) return explicitFastStart(t,deadlineDays) || shortTermScore(t)>0;
+  return true;
+}
+
+function relevanceScore(job, work, deadlineDays, goalMode){
+  const t=(job.title+" "+job.snippet+" "+(job.type||"")).toLowerCase();
+  let score=0;
+  work.forEach(k=>{
+    const parts=k.split(" ");
+    if(parts.some(p=>p.length>3 && t.includes(p))) score+=3;
+  });
+  score += shortTermScore(t)*2;
+  if(explicitFastStart(t,deadlineDays)) score+=8;
+  if(payoutSignal(t)) score+=8;
+  if(goalMode==="cash" && explicitCashByDeadline(t,deadlineDays)) score+=10;
+  if(parseHourly(job.salary)) score+=2;
+  score -= longTermPenalty(t, deadlineDays);
+  if(goalMode==="cash" && !explicitCashByDeadline(t,deadlineDays)) score-=6;
+  if(regulatedRisk(t)) score-=8;
+  if(scamRisk(t)) score-=20;
+  return score;
+}
+
+function normalizeJooble(j){
+  return {
+    title:j.title||"Untitled job",
+    company:j.company||j.source||"Employer",
+    location:j.location||"",
+    salary:j.salary||"",
+    type:j.type||"",
+    updated:j.updated||"",
+    snippet:(j.snippet||"").replace(/<[^>]*>/g," "),
+    link:j.link||"#",
+    demo:false,
+    sourceName:"Jooble"
+  };
+}
+
+async function fetchJooble(apiKey, keywords, location, radius){
+  const endpoint="https://ca.jooble.org/api/"+encodeURIComponent(apiKey);
+  const payload={keywords,location,radius:String(radius),page:1,ResultOnPage:20,SearchMode:1};
+  const r=await fetch(endpoint,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  });
+  if(!r.ok) throw new Error("Jooble returned HTTP "+r.status);
+  const data=await r.json();
+  return (data.jobs||[]).map(normalizeJooble);
+}
+
+function normalizeAdzuna(j){
+  const area=(j.location && j.location.display_name) ? j.location.display_name : "";
+  let salary="";
+  if(j.salary_min || j.salary_max){
+    const a=j.salary_min||j.salary_max, b=j.salary_max||j.salary_min;
+    if(a && b && Math.max(a,b)>1000){
+      salary="$"+Math.round(a).toLocaleString()+"–$"+Math.round(b).toLocaleString()+" per year";
+    } else if(a && b){
+      salary="$"+Number(a).toFixed(2)+"–$"+Number(b).toFixed(2)+" per hour";
+    }
+  }
+  return {
+    title:j.title||"Untitled job",
+    company:(j.company && j.company.display_name)||"Employer",
+    location:area,
+    salary:salary,
+    type:"",
+    updated:j.created||"",
+    snippet:(j.description||"").replace(/<[^>]*>/g," "),
+    link:j.redirect_url||"#",
+    demo:false,
+    sourceName:"Adzuna"
+  };
+}
+
+async function fetchAdzuna(appId, appKey, market, keywords, location){
+  const safeMarket=(market||'').toLowerCase().replace(/[^a-z]/g,'');
+  if(!safeMarket) throw new Error("Adzuna market code is missing");
+  const url=new URL("https://api.adzuna.com/v1/api/jobs/"+safeMarket+"/search/1");
+  url.searchParams.set("app_id",appId);
+  url.searchParams.set("app_key",appKey);
+  url.searchParams.set("results_per_page","20");
+  url.searchParams.set("what",keywords);
+  url.searchParams.set("where",location);
+  url.searchParams.set("content-type","application/json");
+  const r=await fetch(url.toString(),{headers:{"Accept":"application/json"}});
+  if(!r.ok) throw new Error("Adzuna returned HTTP "+r.status);
+  const data=await r.json();
+  return (data.results||[]).map(normalizeAdzuna);
+}
+
+function replyText(job){
+  return `Hi, I saw your posting for ${job.title}. I'm interested and would like to confirm the schedule, exact work involved, location, pay rate and when payment is issued. Please let me know if the position is still available.`;
+}
+
+function copyReply(job){
+  navigator.clipboard.writeText(replyText(job)).then(()=>alert("Reply copied."));
+}
+
+function render(jobs){
+  const goal=Number(document.getElementById('goal').value)||0;
+  const days=Number(document.getElementById('deadline').value)||1;
+  const hours=Math.min(16,Number(document.getElementById('hours').value)||1);
+  const goalMode=document.getElementById('goalMode').value;
+  const work=selectedWork();
+
+  jobs.forEach(j=>{
+    j.snippet=decodeSnippet(j.snippet);
+    j.score=relevanceScore(j,work,days,goalMode);
+  });
+  jobs.sort((a,b)=>b.score-a.score);
+
+  let remainingHours=days*hours;
+  let route=0;
+  jobs.forEach(j=>{
+    const fullText=j.title+" "+j.snippet+" "+(j.type||"");
+    const hourly=parseHourly(j.salary);
+    j.hourly=hourly;
+    j.risk=regulatedRisk(fullText);
+    j.scam=scamRisk(fullText);
+    j.fastPay=payoutSignal(fullText);
+    j.fastStart=explicitFastStart(fullText,days);
+    j.cashByDeadline=explicitCashByDeadline(fullText,days);
+    j.quickFit=(goalMode==="cash") ? quickCashEligible(j,days) : quickBookedEligible(j,days);
+
+    if(hourly && j.quickFit && !j.risk && !j.scam && remainingHours>0){
+      const usable=Math.min(hours,remainingHours,8);
+      j.routeContribution=hourly*usable;
+      remainingHours-=usable;
+      route+=j.routeContribution;
+    } else {
+      j.routeContribution=0;
+    }
+  });
+
+  document.getElementById('goalOut').textContent=money(goal);
+  document.getElementById('routeOut').textContent=money(route);
+  document.getElementById('routeLabel').textContent = goalMode==="cash" ? "CASH-DEADLINE ROUTE VALUE*" : "BOOKED-WORK ROUTE VALUE*";
+  document.getElementById('fill').style.width=Math.min(100,(route/Math.max(goal,1))*100)+"%";
+  const lane=document.getElementById('lane').value;
+  let gap=document.getElementById('sourceGap');
+  if(!gap){
+    gap=document.createElement('div');
+    gap.id='sourceGap';
+    document.getElementById('results').insertBefore(gap, document.getElementById('results').children[1]);
+  }
+  if(lane==="quick" && route===0){
+    gap.innerHTML=`<div class="card notice"><strong>No verified quick-cash route from connected feeds.</strong><br><span class="small">That does not mean no work exists. It means our connected job feeds do not prove both fast start and fast payout for your deadline. That does not mean no work exists. Fast-pay sources vary by country and city, so the production engine will use a local source registry and only connect to sources we are allowed to access automatically.</span><div class="small" style="margin-top:8px">Next step: add permitted local gig/shift/task sources for this market.</div></div>`;
+  } else {
+    gap.innerHTML="";
+  }
+
+  const list=document.getElementById('jobList');
+  list.innerHTML="";
+  jobs.slice(0,15).forEach((j,idx)=>{
+    const div=document.createElement('div');
+    div.className='job';
+    const tags=[];
+    if(j.demo) tags.push(`<span class="tag warn">DEMO — NOT A REAL POSTING</span>`);
+    if(j.hourly) tags.push(`<span class="tag good">Rate detected: ${money(j.hourly)}/hr</span>`);
+    else tags.push(`<span class="tag warn">Pay needs verification</span>`);
+    if(shortTermScore(j.title+" "+j.snippet+" "+j.type)>0) tags.push(`<span class="tag good">Short-term language detected</span>`);
+    if(j.fastStart) tags.push(`<span class="tag good">Fast-start wording detected</span>`);
+    if(j.fastPay) tags.push(`<span class="tag good">Fast-pay wording detected</span>`);
+    if(goalMode==="cash" && !j.cashByDeadline) tags.push(`<span class="tag warn">Payout by deadline NOT confirmed</span>`);
+    if(!j.quickFit) tags.push(`<span class="tag warn">Not counted toward your goal</span>`);
+    if(j.risk) tags.push(`<span class="tag bad">Credential / regulated-work check</span>`);
+    if(j.scam) tags.push(`<span class="tag bad">Possible scam language</span>`);
+    div.innerHTML=`
+      <h3>${idx+1}. ${escapeHtml(j.title)}</h3>
+      <div class="meta">${escapeHtml(j.company)} • ${escapeHtml(j.location)} ${j.type?"• "+escapeHtml(j.type):""} ${j.sourceName?"• Source: "+escapeHtml(j.sourceName):""}</div>
+      <div class="money">${j.salary?escapeHtml(j.salary):"Pay not listed"}</div>
+      <div>${tags.join("")}</div>
+      <div class="meta" style="margin-top:7px">${escapeHtml(j.snippet).slice(0,500)}</div>
+      ${j.routeContribution?`<div class="oknotice" style="margin-top:10px">Possible route contribution: <strong>${money(j.routeContribution)}</strong> using up to your available hours for one day. The posting contains the required deadline signals, but you still must confirm hire, hours and payout directly.</div>`:""}
+      ${!j.routeContribution && j.hourly?`<div class="notice" style="margin-top:10px">This posting is not counted toward your goal because the listing does not clearly prove the required start/payout timing for your selected deadline.</div>`:""}
+      <div class="actions">
+        ${j.demo?`<button class="secondary" disabled>Demo only</button>`:`<a class="secondary source" href="${safeUrl(j.link)}" target="_blank" rel="noopener">Open original posting</a>`}
+        <button class="secondary" onclick='copyReply(${JSON.stringify(j).replace(/'/g,"&#39;")})'>Copy safe first reply</button>
+      </div>`;
+    list.appendChild(div);
+  });
+  document.getElementById('results').classList.remove('hide');
+}
+
+function escapeHtml(s){
+  return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+function safeUrl(u){
+  try{
+    const x=new URL(u);
+    return ['http:','https:'].includes(x.protocol)?escapeHtml(x.href):'#';
+  }catch(e){return '#'}
+}
+
+async function hunt(){
+  const status=document.getElementById('status');
+  const key=document.getElementById('apiKey').value.trim();
+  const adzunaId=document.getElementById('adzunaId').value.trim();
+  const adzunaKey=document.getElementById('adzunaKey').value.trim();
+  const adzunaMarket=document.getElementById('adzunaMarket').value.trim();
+  const country=document.getElementById('country').value;
+  const lane=document.getElementById('lane').value;
+  const work=selectedWork();
+  const location=document.getElementById('location').value.trim();
+  const radius=document.getElementById('radius').value;
+  document.getElementById('results').classList.add('hide');
+
+  if(!work.length){
+    status.innerHTML='<div class="notice card">Choose at least one type of work.</div>';
+    return;
+  }
+
+  if(!key && !(adzunaId && adzunaKey)){
+    status.innerHTML='<div class="notice card"><strong>Demo mode.</strong> No live source credentials are entered, so these results are illustrative only.</div>';
+    render(DEMO_JOBS);
+    return;
+  }
+
+  status.innerHTML='<div class="card">Hunting permitted job listings…</div>';
+  try{
+    let queries=[...new Set(work.slice(0,5))];
+    if(lane==="quick"){
+      // Search terms intentionally emphasize shift/temp language without pretending payout is guaranteed.
+      queries=queries.map(q=>q+" temporary casual immediate start").slice(0,5);
+    }
+
+    const calls=[];
+    if(key && country==="CA") calls.push(...queries.map(q=>fetchJooble(key,q,location,radius)));
+    if(adzunaId && adzunaKey) calls.push(...queries.slice(0,3).map(q=>fetchAdzuna(adzunaId,adzunaKey,adzunaMarket,q,location)));
+    if(!calls.length){
+      status.innerHTML='<div class="notice card"><strong>No live source is connected for this market yet.</strong> The worldwide routing is ready, but we still need an approved/API source for the selected country. We will add sources country-by-country rather than scrape sites that prohibit it.</div>';
+      return;
+    }
+
+    const batches=await Promise.all(calls);
+    const seen=new Set(), jobs=[];
+    batches.flat().forEach(j=>{
+      const id=(j.title+"|"+j.company+"|"+j.location).toLowerCase();
+      if(!seen.has(id)){ seen.add(id); jobs.push(j); }
+    });
+
+    const sources=[(key&&country==="CA")?"Jooble Canada":null,(adzunaId&&adzunaKey)?("Adzuna "+adzunaMarket.toUpperCase()):null].filter(Boolean).join(" + ");
+    status.innerHTML=`<div class="oknotice card"><strong>${jobs.length} listings found.</strong> Connected sources: ${sources}. Open the original posting before relying on any listing.</div>`;
+    render(jobs);
+  }catch(err){
+    status.innerHTML=`<div class="notice card"><strong>Live connection failed.</strong> ${escapeHtml(err.message)}. The production version will put source APIs behind a secure server.</div>`;
+  }
+}
+</script>
+</body>
+</html>
