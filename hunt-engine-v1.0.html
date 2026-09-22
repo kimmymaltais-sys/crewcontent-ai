@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Hunt Engine V1.0</title>
+<style>
+:root{
+  --bg:#0d1117; --panel:#161b22; --panel2:#20262e; --text:#f0f6fc;
+  --muted:#9da7b3; --line:#30363d; --ok:#3fb950; --warn:#d29922;
+  --bad:#f85149; --accent:#58a6ff;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.wrap{max-width:900px;margin:auto;padding:18px}
+h1{font-size:30px;margin:8px 0}
+.sub{color:var(--muted);line-height:1.45;margin-bottom:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:650px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:13px;color:var(--muted);margin:3px 0 6px}
+input,select,textarea{width:100%;padding:13px;border-radius:11px;border:1px solid var(--line);background:#0d1117;color:var(--text);font-size:16px}
+textarea{min-height:90px;resize:vertical}
+button{border:0;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:700;cursor:pointer}
+.primary{background:var(--accent);color:#07111d;width:100%}
+.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:flex;align-items:center;gap:6px;padding:9px 11px;border:1px solid var(--line);border-radius:999px;background:#0d1117}
+.pill input{width:auto}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.big{font-size:32px;font-weight:800}
+.small{font-size:12px;color:var(--muted)}
+.bar{height:12px;background:#0d1117;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.fill{height:100%;background:var(--ok);width:0%}
+.job{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px;background:#10151c}
+.job h3{margin:0 0 5px;font-size:18px}
+.meta{color:var(--muted);font-size:13px;line-height:1.4}
+.money{font-size:20px;font-weight:800;margin:8px 0}
+.tag{display:inline-block;font-size:12px;padding:4px 8px;border-radius:999px;margin:3px 4px 3px 0;border:1px solid var(--line)}
+.good{color:#7ee787;border-color:#238636}.warn{color:#e3b341;border-color:#9e6a03}.bad{color:#ff7b72;border-color:#da3633}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.actions a,.actions button{font-size:13px;padding:9px 10px;text-decoration:none}
+.source{color:var(--accent)}
+.hide{display:none}
+.notice{border-left:4px solid var(--warn);padding:10px 12px;background:#211a0b;border-radius:8px;line-height:1.4}
+.oknotice{border-left:4px solid var(--ok);padding:10px 12px;background:#0f2414;border-radius:8px;line-height:1.4}
+footer{color:var(--muted);font-size:12px;line-height:1.4;padding:20px 2px 40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Hunt Engine <span class="small">V1.0 prototype</span></h1>
+  <div class="sub">Tell it the money goal. Hunt Engine hunts several live money routes, puts urgent opportunities ahead of ordinary jobs, and only counts money when the posting gives enough timing evidence.</div>
+
+  <div id="runtime" class="notice">Checking secure search backend…</div>
+
+  <div class="card">
+    <label>What are you trying to do?</label>
+    <select id="lane" onchange="laneChanged()" style="margin-bottom:14px">
+      <option value="quick" selected>QUICK CASH — I need money soon</option>
+      <option value="steady">STEADY INCOME — I need ongoing work</option>
+    </select>
+
+    <div id="laneNote" class="oknotice" style="margin-bottom:14px">
+      <strong>Quick Cash:</strong> prioritize fast-start + fast-payout evidence. Ordinary jobs are not counted toward an urgent money goal unless the posting supports the timing.
+    </div>
+
+    <div class="grid">
+      <div>
+        <label>Money goal</label>
+        <input id="goal" type="number" value="500" min="1">
+      </div>
+      <div>
+        <label>Deadline</label>
+        <select id="deadline">
+          <option value="1">Today / next 24 hours</option>
+          <option value="3" selected>Within 3 days</option>
+          <option value="7">Within 7 days</option>
+          <option value="14">Within 14 days</option>
+        </select>
+      </div>
+      <div>
+        <label>What does the goal mean?</label>
+        <select id="goalMode">
+          <option value="cash" selected>Money paid by the deadline</option>
+          <option value="booked">Work booked / accepted by the deadline</option>
+        </select>
+      </div>
+      <div>
+        <label>Country / market</label>
+        <select id="country" onchange="countryChanged()">
+          <option value="CA" selected>Canada</option>
+          <option value="US">United States</option>
+          <option value="GB">United Kingdom</option>
+          <option value="AU">Australia</option>
+          <option value="NZ">New Zealand</option>
+        </select>
+      </div>
+      <div>
+        <label>Currency</label>
+        <select id="currency">
+          <option value="CAD" selected>CAD — Canadian dollar</option>
+          <option value="USD">USD — US dollar</option>
+          <option value="GBP">GBP — British pound</option>
+          <option value="AUD">AUD — Australian dollar</option>
+          <option value="NZD">NZD — New Zealand dollar</option>
+        </select>
+      </div>
+      <div>
+        <label>City / area</label>
+        <input id="location" value="Edmonton, AB" placeholder="City, region, postal area">
+      </div>
+      <div>
+        <label>Maximum travel distance</label>
+        <select id="radius">
+          <option value="8">8 km</option>
+          <option value="16">16 km</option>
+          <option value="26" selected>26 km</option>
+          <option value="40">40 km</option>
+          <option value="80">80 km</option>
+        </select>
+      </div>
+      <div>
+        <label>How fast must payment happen?</label>
+        <select id="paySpeed">
+          <option value="same_day">Same day</option>
+          <option value="next_day">By next day</option>
+          <option value="3_days" selected>Within 3 days</option>
+          <option value="7_days">Within 7 days</option>
+          <option value="any">Any payout timing</option>
+        </select>
+      </div>
+      <div>
+        <label>Hours available per day</label>
+        <input id="hours" type="number" value="6" min="1" max="16">
+      </div>
+      <div>
+        <label>Transportation</label>
+        <select id="transport">
+          <option>Car</option>
+          <option>Truck</option>
+          <option>SUV / van</option>
+          <option>Public transit</option>
+          <option>Bike</option>
+          <option>No vehicle</option>
+        </select>
+      </div>
+    </div>
+
+    <label style="margin-top:14px">Work I am willing to do</label>
+    <label style="margin-top:14px">Quick-cash routes to hunt</label>
+    <div class="pills" style="margin-bottom:12px">
+      <label class="pill"><input type="checkbox" class="route" value="local gig" checked> Local gigs</label>
+      <label class="pill"><input type="checkbox" class="route" value="same day pay" checked> Same-day / next-day pay</label>
+      <label class="pill"><input type="checkbox" class="route" value="paid research study" checked> Paid studies</label>
+      <label class="pill"><input type="checkbox" class="route" value="user testing paid" checked> User testing</label>
+      <label class="pill"><input type="checkbox" class="route" value="temporary shift" checked> Temp shifts</label>
+      <label class="pill"><input type="checkbox" class="route" value="freelance one off task" checked> One-off freelance</label>
+      <label class="pill"><input type="checkbox" class="route" value="event staff daily pay" checked> Event / day work</label>
+      <label class="pill"><input type="checkbox" class="route" value="moving cleanup helper cash" checked> Moving / cleanup</label>
+    </div>
+    <label>Work types / skills you are willing to do</label>
+    <div class="pills">
+      <label class="pill"><input type="checkbox" class="work" value="general labour" checked> General labour</label>
+      <label class="pill"><input type="checkbox" class="work" value="moving helper" checked> Moving</label>
+      <label class="pill"><input type="checkbox" class="work" value="cleaner" checked> Cleaning</label>
+      <label class="pill"><input type="checkbox" class="work" value="warehouse" checked> Warehouse</label>
+      <label class="pill"><input type="checkbox" class="work" value="delivery driver" checked> Delivery</label>
+      <label class="pill"><input type="checkbox" class="work" value="landscaping" checked> Yard / landscaping</label>
+      <label class="pill"><input type="checkbox" class="work" value="handyman"> Basic handyman</label>
+      <label class="pill"><input type="checkbox" class="work" value="event staff"> Event work</label>
+    </div>
+
+    <label style="margin-top:14px">Extra limits or useful equipment</label>
+    <textarea id="notes" placeholder="Example: available after 5 PM, can lift 50 lb, have a truck, no heights, no electrical/gas/plumbing work."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <strong>Secure live search backend</strong>
+        <div class="small">Provider keys stay in Cloudflare and are never shown to users.</div>
+      </div>
+      <span id="backendBadge" class="tag warn">CHECKING</span>
+    </div>
+    <div id="backendDetail" class="small" style="line-height:1.6;margin-top:10px">Checking Jooble, Adzuna and Brave…</div>
+  </div>
+
+  <button class="primary" onclick="hunt()">HUNT FOR WORK</button>
+
+  <div id="status"></div>
+
+  <div id="results" class="hide">
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="small">MONEY GOAL</div>
+          <div class="big" id="goalOut">$0</div>
+        </div>
+        <div style="text-align:right">
+          <div class="small" id="routeLabel">VERIFIED-FIT ROUTE VALUE*</div>
+          <div class="big" id="routeOut">$0</div>
+        </div>
+      </div>
+      <div class="bar"><div class="fill" id="fill"></div></div>
+      <div id="goalTiming" class="small" style="margin-top:7px"></div>
+      <div class="small" style="margin-top:7px">*This is a planning estimate from posting text, not a promise of hire, hours, earnings or payout.</div>
+    </div>
+
+    <div id="sourceGap"></div>
+
+    <div class="card">
+      <strong>Hunt results</strong>
+      <div class="small">Quick-cash opportunities are separated from ordinary jobs so urgent money searches are easier to act on.</div>
+      <div id="jobList"></div>
+    </div>
+
+    <div class="card">
+      <strong>Safety rules</strong>
+      <div class="small" style="line-height:1.7;margin-top:8px">
+        • Never pay an upfront fee to get a job.<br>
+        • Never accept gift cards, cheque overpayments or requests to forward money.<br>
+        • No automatic application or messaging; you review everything first.<br>
+        • Regulated/high-risk work is flagged instead of recommended blindly.<br>
+        • Open the original posting before relying on any result.
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    V1.0 prototype for validation only. It does not guarantee work, pay, availability, licensing, safety, or that a posting remains active. Verify the original posting and comply with local employment, tax, licensing and safety rules.
+  </footer>
+</div>
+
+<script>
+const API_URL="https://hunt-engine-api.freedomwithwater.workers.dev";
+
+window.addEventListener("DOMContentLoaded",checkBackend);
+
+async function checkBackend(){
+  const runtime=document.getElementById("runtime");
+  const badge=document.getElementById("backendBadge");
+  const detail=document.getElementById("backendDetail");
+  try{
+    const r=await fetch(API_URL+"/health");
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    const h=await r.json();
+    const p=h.providers||{};
+    const all=!!(p.brave&&p.jooble&&p.adzuna);
+    runtime.className=all?"oknotice":"notice";
+    runtime.innerHTML=all
+      ?"<strong>App ready.</strong> Secure live-search backend is connected."
+      :"<strong>Backend reachable.</strong> One or more providers need attention.";
+    badge.className=all?"tag good":"tag warn";
+    badge.textContent=all?"LIVE":"PARTIAL";
+    detail.textContent=
+      "Jooble: "+(p.jooble?"connected":"not connected")+
+      " • Adzuna: "+(p.adzuna?"connected":"not connected")+
+      " • Brave: "+(p.brave?"connected":"not connected");
+  }catch(e){
+    runtime.className="notice";
+    runtime.innerHTML="<strong>Backend connection problem.</strong> The live search service could not be reached.";
+    badge.className="tag bad";
+    badge.textContent="OFFLINE";
+    detail.textContent=e.message||String(e);
+  }
+}
+
+function laneChanged(){
+  const lane=document.getElementById("lane").value;
+  const note=document.getElementById("laneNote");
+  const mode=document.getElementById("goalMode");
+  if(lane==="quick"){
+    note.innerHTML="<strong>Quick Cash:</strong> prioritize fast-start + fast-payout evidence. Ordinary jobs are not counted toward an urgent money goal unless the posting supports the timing.";
+    mode.value="cash";
+  }else{
+    note.innerHTML="<strong>Steady Income:</strong> prioritize ongoing jobs and fit. Fast-payout evidence is not required.";
+    mode.value="booked";
+  }
+}
+
+function countryChanged(){
+  const c=document.getElementById("country").value;
+  const currency=document.getElementById("currency");
+  const location=document.getElementById("location");
+  const map={
+    CA:{currency:"CAD",placeholder:"Edmonton, AB"},
+    US:{currency:"USD",placeholder:"Denver, CO"},
+    GB:{currency:"GBP",placeholder:"Manchester"},
+    AU:{currency:"AUD",placeholder:"Brisbane, QLD"},
+    NZ:{currency:"NZD",placeholder:"Auckland"}
+  };
+  currency.value=map[c].currency;
+  location.placeholder=map[c].placeholder;
+}
+
+function selectedWork(){
+  return [...document.querySelectorAll(".work:checked")].map(x=>x.value);
+}
+
+function selectedRoutes(){
+  return [...document.querySelectorAll(".route:checked")].map(x=>x.value);
+}
+
+function routeKind(job){
+  const t=(job.title+" "+job.snippet+" "+(job.type||"")).toLowerCase();
+  if(job.searchClass==="research_testing") return "Paid research / testing";
+  if(job.searchClass==="one_off_tasks") return "One-off local task";
+  if(job.searchClass==="local_fast_cash") return "Fast-pay local work";
+  if(/research study|participant|focus group|clinical study|paid study|research participant/.test(t)) return "Paid research";
+  if(/user test|usability|website test|app test|product test|testing participant/.test(t)) return "User testing";
+  if(/event staff|event crew|banquet|festival|concert|usher/.test(t)) return "Event work";
+  if(/moving|mover|cleanup|clean up|yard|snow|landscap|general labour|laborer|labourer/.test(t)) return "Local task / labour";
+  if(/freelance|contractor|one[- ]off|project based|gig/.test(t)) return "Freelance / gig";
+  if(/temporary|temp|casual|on call|day shift|daily pay|same day/.test(t)) return "Temp / fast-start work";
+  return "Ordinary job / other";
+}
+
+function ordinaryJob(job){
+  const t=(job.title+" "+job.snippet+" "+(job.type||"")).toLowerCase();
+  if(job.sourceType==="job_api" && !/temporary|temp\b|casual|contract|on[- ]call|seasonal|daily pay|same day|immediate start|start immediately/.test(t)) return true;
+  return routeKind(job)==="Ordinary job / other";
+}
+
+function parseFlatPay(text){
+  const s=String(text||"").replace(/,/g," ");
+  let m=s.match(/(?:compensation|honorarium|paid|pay|earn|receive)\s*(?:is|of|up to|:)?\s*\$\s*([0-9]+(?:\.[0-9]+)?)/i);
+  if(m) return Number(m[1]);
+  m=s.match(/\$\s*([0-9]+(?:\.[0-9]+)?)\s*(?:for\s+(?:the\s+)?(?:study|session|shift|task|survey|interview|focus group)|per\s+(?:study|session|task|survey))/i);
+  if(m) return Number(m[1]);
+  return null;
+}
+
+function evidenceState(job,days,goalMode){
+  const t=(job.title+" "+job.snippet+" "+(job.type||"")).toLowerCase();
+  const fast=explicitFastStart(t,days), cash=explicitCashByDeadline(t,days);
+  if(goalMode==="cash" && fast && cash) return "supported";
+  if(goalMode!=="cash" && (fast || shortTermScore(t)>0)) return "supported";
+  if(fast || cash || shortTermScore(t)>0) return "possible";
+  return "unverified";
+}
+
+
+function money(n){
+  const c=document.getElementById("currency").value||"CAD";
+  try{return new Intl.NumberFormat(undefined,{style:"currency",currency:c,maximumFractionDigits:0}).format(n||0)}
+  catch{return c+" "+Math.round(n||0)}
+}
+
+function parseHourly(text){
+  if(!text)return null;
+  const s=String(text).replace(/,/g,"");
+  let m=s.match(/\$?\s*([0-9]+(?:\.[0-9]+)?)\s*(?:-|to|–)?\s*\$?\s*([0-9]+(?:\.[0-9]+)?)?\s*(?:per\s*)?(hour|hr|hourly)/i);
+  if(m){
+    const a=Number(m[1]),b=m[2]?Number(m[2]):a;
+    return (a+b)/2;
+  }
+  m=s.match(/\$?\s*([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*)?(day|daily)/i);
+  if(m)return Number(m[1])/8;
+  m=s.match(/\$?\s*([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*)?(year|yearly|annum|annual)/i);
+  if(m)return Number(m[1])/2080;
+  return null;
+}
+
+function regulatedRisk(text){
+  const t=text.toLowerCase();
+  return ["electrical","electrician","panel","gas fitting","gasfitter","gas fitter","boiler","elevator","crane operator","plumber","plumbing"].some(k=>t.includes(k));
+}
+
+function scamRisk(text){
+  const t=text.toLowerCase();
+  return ["upfront fee","gift card","deposit to start","send money","overpayment","cheque and return","crypto payment","training fee"].some(k=>t.includes(k));
+}
+
+function detectPaySchedule(text){
+  const t=text.toLowerCase();
+  if(["same day pay","same-day pay","same day payout","paid after shift","cash after shift","cash on completion","cash upon completion","instant pay","instant payout","e-transfer after","etransfer after","paid daily","daily pay","paid immediately"].some(k=>t.includes(k)))return {label:"Same day / daily",rank:1};
+  if(["next day pay","next-day pay","within 24 hours","within one day"].some(k=>t.includes(k)))return {label:"Within 24 hours",rank:2};
+  if(/(?:paid|payment|payout).{0,22}(?:within|in)\s*(?:48\s*hours|2\s*days)/i.test(t))return {label:"Within 2 days",rank:2};
+  if(/(?:paid|payment|payout).{0,22}(?:within|in)\s*(?:72\s*hours|3\s*days)/i.test(t))return {label:"Within 3 days",rank:3};
+  if(["weekly pay","paid weekly","weekly payroll"].some(k=>t.includes(k)))return {label:"Weekly",rank:7};
+  if(["biweekly","bi-weekly","every two weeks","every 2 weeks"].some(k=>t.includes(k)))return {label:"Biweekly",rank:14};
+  return null;
+}
+
+function paySpeedDays(){
+  const v=document.getElementById("paySpeed").value;
+  if(v==="same_day")return 1;
+  if(v==="next_day")return 2;
+  if(v==="3_days")return 3;
+  if(v==="7_days")return 7;
+  return 999;
+}
+
+function explicitCashByDeadline(text,days){
+  const s=detectPaySchedule(text);
+  if(!s)return false;
+  return s.rank<=Math.min(days,paySpeedDays());
+}
+
+function explicitFastStart(text,days){
+  const t=text.toLowerCase();
+  if(["start today","start immediately","immediate start","starts immediately","urgent start","start tomorrow","can start tomorrow","hiring immediately","shift today","shift tomorrow","work today","work tomorrow"].some(k=>t.includes(k)))return true;
+  if(days>=7&&["temporary","temp ","casual","contract","seasonal","on-call","on call"].some(k=>t.includes(k)))return true;
+  return false;
+}
+
+function shortTermScore(text){
+  const t=text.toLowerCase();
+  return ["temporary","temp ","casual","contract","immediate","urgent","seasonal","part time","part-time","weekend","evening","on call","on-call","day labour","day labor","same day","daily pay"].reduce((n,k)=>n+(t.includes(k)?1:0),0);
+}
+
+function score(job,work,days,goalMode){
+  const t=(job.title+" "+job.snippet+" "+(job.type||"")).toLowerCase();
+  let n=0;
+  work.forEach(k=>{
+    if(k.split(" ").some(p=>p.length>3&&t.includes(p)))n+=3;
+  });
+  n+=shortTermScore(t)*2;
+  if(explicitFastStart(t,days))n+=10;
+  if(detectPaySchedule(t))n+=10;
+  if(goalMode==="cash"&&explicitCashByDeadline(t,days))n+=14;
+  if(parseHourly(job.salary)||parseFlatPay(job.salary+" "+job.snippet))n+=3;
+  if(job.searchClass==="local_fast_cash")n+=16;
+  if(job.searchClass==="research_testing")n+=14;
+  if(job.searchClass==="one_off_tasks")n+=12;
+  if(ordinaryJob(job)&&document.getElementById("lane").value==="quick")n-=18;
+  if(/full[- ]time|permanent|career|salary/.test(t)&&document.getElementById("lane").value==="quick")n-=8;
+  if(regulatedRisk(t))n-=10;
+  if(scamRisk(t))n-=25;
+  return n;
+}
+
+function quickFit(job,days,goalMode){
+  const t=(job.title+" "+job.snippet+" "+(job.type||"")).toLowerCase();
+  if(regulatedRisk(t)||scamRisk(t))return false;
+  if(goalMode==="cash")return explicitCashByDeadline(t,days)&&explicitFastStart(t,days);
+  if(days<=3)return explicitFastStart(t,days);
+  if(days<=7)return explicitFastStart(t,days)||shortTermScore(t)>0;
+  return true;
+}
+
+function escapeHtml(s){
+  return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+
+function safeUrl(u){
+  try{
+    const x=new URL(u);
+    return ["http:","https:"].includes(x.protocol)?escapeHtml(x.href):"#";
+  }catch{return "#"}
+}
+
+function replyText(job){
+  return `Hi, I saw your posting for ${job.title}. I'm interested and would like to confirm the schedule, exact work involved, location, pay rate and when payment is issued. Please let me know if the position is still available.`;
+}
+
+function copyReply(job){
+  navigator.clipboard.writeText(replyText(job)).then(()=>alert("Reply copied."));
+}
+
+function render(jobs){
+  const goal=Number(document.getElementById("goal").value)||0;
+  const days=Number(document.getElementById("deadline").value)||1;
+  const hours=Math.min(16,Number(document.getElementById("hours").value)||1);
+  const goalMode=document.getElementById("goalMode").value;
+  const lane=document.getElementById("lane").value;
+  const work=selectedWork();
+
+  jobs.forEach(j=>{
+    j.snippet=String(j.snippet||"").replace(/\s+/g," ").trim();
+    j.routeKind=routeKind(j);
+    j.evidence=evidenceState(j,days,goalMode);
+    j.hourly=parseHourly(j.salary);
+    j.flatPay=parseFlatPay((j.salary||"")+" "+j.snippet);
+    const full=j.title+" "+j.snippet+" "+(j.type||"");
+    j.risk=regulatedRisk(full);
+    j.scam=scamRisk(full);
+    j.paySchedule=detectPaySchedule(full);
+    j.fastStart=explicitFastStart(full,days);
+    j.cashByDeadline=explicitCashByDeadline(full,days);
+    j.quickFit=quickFit(j,days,goalMode);
+    j.score=score(j,work,days,goalMode);
+    if(j.evidence==="supported") j.score+=28;
+    else if(j.evidence==="possible") j.score+=9;
+  });
+  jobs.sort((a,b)=>b.score-a.score);
+
+  let remaining=days*hours, route=0, usedHours=0;
+  for(const j of jobs){
+    j.routeContribution=0;
+    j.possibleContribution=0;
+    if(!j.quickFit||j.risk||j.scam||remaining<=0) continue;
+
+    if(j.flatPay){
+      j.routeContribution=j.flatPay;
+      const consume=Math.min(2,remaining);
+      remaining-=consume; usedHours+=consume;
+    }else if(j.hourly){
+      const usable=Math.min(hours,remaining,8);
+      j.routeContribution=j.hourly*usable;
+      remaining-=usable; usedHours+=usable;
+    }
+    route+=j.routeContribution;
+  }
+
+  let possibleRemaining=Math.max(0,days*hours-usedHours), possibleRoute=0;
+  for(const j of jobs){
+    if(j.routeContribution||j.evidence!=="possible"||j.risk||j.scam||possibleRemaining<=0) continue;
+    if(j.flatPay){
+      j.possibleContribution=j.flatPay;
+      possibleRemaining-=Math.min(2,possibleRemaining);
+    }else if(j.hourly){
+      const usable=Math.min(hours,possibleRemaining,8);
+      j.possibleContribution=j.hourly*usable;
+      possibleRemaining-=usable;
+    }
+    possibleRoute+=j.possibleContribution;
+  }
+
+  document.getElementById("goalOut").textContent=money(goal);
+  document.getElementById("routeOut").textContent=money(route);
+  document.getElementById("routeLabel").textContent=goalMode==="cash"?"SUPPORTED CASH-BY-DEADLINE*":"SUPPORTED BOOKED-WORK VALUE*";
+  document.getElementById("fill").style.width=Math.min(100,(route/Math.max(goal,1))*100)+"%";
+
+  const speed=document.getElementById("paySpeed").options[document.getElementById("paySpeed").selectedIndex].text;
+  const deadline=document.getElementById("deadline").options[document.getElementById("deadline").selectedIndex].text;
+  document.getElementById("goalTiming").textContent=`Deadline: ${deadline} • Required payout: ${speed}`;
+
+  const gap=document.getElementById("sourceGap");
+  if(lane==="quick"){
+    const left=Math.max(0,goal-route);
+    gap.innerHTML=`<div class="card ${route>0?"oknotice":"notice"}">
+      <strong>${route>0?`${money(route)} supported toward the deadline`:"No supported cash-by-deadline amount yet."}</strong>
+      <div class="small" style="margin-top:6px">${left>0?`${money(left)} still needs a supported route. `:"The selected goal is covered by supported planning estimates. "}${possibleRoute>0?`${money(possibleRoute)} more looks possible from the remaining time capacity, but it is NOT counted until start/pay timing is confirmed.`:"Unverified discovery leads may still appear below, but they are not counted as cash."}</div>
+    </div>`;
+  }else gap.innerHTML="";
+
+  const list=document.getElementById("jobList");
+  list.innerHTML="";
+
+  const quick=jobs.filter(j=>lane==="quick" && (
+    j.searchClass==="local_fast_cash" ||
+    j.searchClass==="research_testing" ||
+    j.searchClass==="one_off_tasks" ||
+    !ordinaryJob(j) ||
+    j.evidence==="supported" ||
+    j.evidence==="possible"
+  ));
+  const quickSet=new Set(quick);
+  const fallback=lane==="quick" ? jobs.filter(j=>!quickSet.has(j)) : jobs;
+
+  function appendJob(j,number){
+    const div=document.createElement("div");
+    div.className="job";
+    const tags=[];
+    tags.push(`<span class="tag ${j.evidence==="supported"?"good":j.evidence==="possible"?"warn":""}">Route: ${escapeHtml(j.routeKind)}</span>`);
+    tags.push(`<span class="tag ${j.evidence==="supported"?"good":"warn"}">${j.evidence==="supported"?"Deadline evidence supported":j.evidence==="possible"?"Possible — confirm timing":"Timing unverified"}</span>`);
+    if(j.sourceType==="web_search")tags.push('<span class="tag warn">Discovery lead — verify original source</span>');
+    if(j.hourly)tags.push(`<span class="tag good">Rate detected: ${money(j.hourly)}/hr</span>`);
+    else if(j.flatPay)tags.push(`<span class="tag good">Flat amount detected: ${money(j.flatPay)}</span>`);
+    else tags.push('<span class="tag warn">Pay needs verification</span>');
+    if(shortTermScore(j.title+" "+j.snippet+" "+j.type)>0)tags.push('<span class="tag good">Short-term wording</span>');
+    if(j.fastStart)tags.push('<span class="tag good">Fast-start wording</span>');
+    if(j.paySchedule)tags.push(`<span class="tag ${j.cashByDeadline?"good":"warn"}">Payout wording: ${escapeHtml(j.paySchedule.label)}</span>`);
+    if(goalMode==="cash"&&!j.cashByDeadline)tags.push('<span class="tag warn">Payout by deadline NOT confirmed</span>');
+    if(!j.quickFit)tags.push('<span class="tag warn">Not counted toward your goal</span>');
+    if(j.risk)tags.push('<span class="tag bad">Credential / regulated-work check</span>');
+    if(j.scam)tags.push('<span class="tag bad">Possible scam language</span>');
+
+    const displayedPay=j.salary?escapeHtml(j.salary):(j.flatPay?`${money(j.flatPay)} detected in listing`:"Pay not listed");
+    div.innerHTML=`
+      <h3>${number}. ${escapeHtml(j.title||"Untitled result")}</h3>
+      <div class="meta">${escapeHtml(j.company||"")} ${j.location?"• "+escapeHtml(j.location):""} ${j.type?"• "+escapeHtml(j.type):""} ${j.sourceName?"• Source: "+escapeHtml(j.sourceName):""}</div>
+      <div class="money">${displayedPay}</div>
+      <div>${tags.join("")}</div>
+      <div class="meta" style="margin-top:7px">${escapeHtml(j.snippet||"").slice(0,600)}</div>
+      ${j.routeContribution?`<div class="oknotice" style="margin-top:10px">Supported planning contribution: <strong>${money(j.routeContribution)}</strong>. Confirm availability, acceptance, work/hours and payout with the original source.</div>`:""}
+      ${j.possibleContribution?`<div class="notice" style="margin-top:10px">Could contribute about <strong>${money(j.possibleContribution)}</strong> if the missing timing details are confirmed. Not counted yet.</div>`:""}
+      <div class="actions">
+        <a class="secondary source" href="${safeUrl(j.link)}" target="_blank" rel="noopener">Open original posting</a>
+        <button class="secondary">Copy verification message</button>
+      </div>`;
+    div.querySelector("button").onclick=()=>copyReply(j);
+    list.appendChild(div);
+  }
+
+  let n=1;
+  if(lane==="quick"){
+    const head=document.createElement("div");
+    head.innerHTML=`<div style="margin-top:18px"><strong style="font-size:20px">Quick-cash hunt</strong><div class="small">Fast-pay, one-off, research/testing, temp and local-task leads come first. A lead can appear here without being counted toward the goal.</div></div>`;
+    list.appendChild(head);
+
+    if(!quick.length){
+      const none=document.createElement("div");
+      none.className="notice";
+      none.style.marginTop="10px";
+      none.innerHTML="<strong>No quick-cash leads surfaced in this search.</strong><div class='small' style='margin-top:5px'>The engine will still show fallback work below.</div>";
+      list.appendChild(none);
+    }else{
+      quick.slice(0,16).forEach(j=>appendJob(j,n++));
+    }
+
+    if(fallback.length){
+      const head2=document.createElement("div");
+      head2.innerHTML=`<div style="margin-top:24px"><strong style="font-size:20px">Fallback / ordinary work</strong><div class="small">These can be useful for income, but they are deliberately kept below urgent cash opportunities.</div></div>`;
+      list.appendChild(head2);
+      fallback.slice(0,8).forEach(j=>appendJob(j,n++));
+    }
+  }else{
+    fallback.slice(0,24).forEach(j=>appendJob(j,n++));
+  }
+
+  document.getElementById("results").classList.remove("hide");
+}
+
+async function hunt(){
+  const status=document.getElementById("status");
+  const work=selectedWork();
+  const routes=selectedRoutes();
+  const lane=document.getElementById("lane").value;
+  const searchTerms=lane==="quick" ? [...new Set([...routes,...work])] : work;
+  const location=document.getElementById("location").value.trim();
+
+  document.getElementById("results").classList.add("hide");
+
+  if(!searchTerms.length){
+    status.innerHTML='<div class="notice card">Choose at least one route or type of work.</div>';
+    return;
+  }
+  if(!location){
+    status.innerHTML='<div class="notice card">Enter a city or area.</div>';
+    return;
+  }
+
+  status.innerHTML='<div class="card"><strong>Hunting several live money routes…</strong><div class="small" style="margin-top:5px">Checking fast-start jobs plus web discovery for local gigs, one-off work, paid research and testing.</div></div>';
+
+  try{
+    const r=await fetch(API_URL+"/hunt",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        lane,
+        goal:Number(document.getElementById("goal").value)||0,
+        deadlineDays:Number(document.getElementById("deadline").value)||3,
+        paySpeed:document.getElementById("paySpeed").value,
+        country:document.getElementById("country").value,
+        location,
+        radiusKm:Number(document.getElementById("radius").value)||26,
+        work:searchTerms,
+        notes:document.getElementById("notes").value.trim()
+      })
+    });
+
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok||!data.ok)throw new Error(data.error||("HTTP "+r.status));
+
+    const providers=Array.isArray(data.providers)?data.providers:[];
+    const good=providers.filter(x=>x.ok).map(x=>`${x.name}${Number.isFinite(x.count)?` (${x.count})`:""}`);
+    const failed=providers.filter(x=>!x.ok).map(x=>x.name);
+
+    status.innerHTML=`<div class="oknotice card"><strong>${data.count||0} live results found.</strong> Sources: ${escapeHtml(good.join(" + ")||"none")}. Open the original source before relying on any result.${failed.length?`<div class="small" style="margin-top:6px">Source issue: ${escapeHtml(failed.join(", "))}</div>`:""}</div>`;
+
+    render(Array.isArray(data.results)?data.results:[]);
+  }catch(e){
+    status.innerHTML=`<div class="notice card"><strong>Live search failed.</strong> ${escapeHtml(e.message||String(e))}. Your API keys remain protected on the backend.</div>`;
+  }
+}
+</script>
+</body>
+</html>
